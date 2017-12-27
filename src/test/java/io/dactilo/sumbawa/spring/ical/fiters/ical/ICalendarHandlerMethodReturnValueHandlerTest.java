@@ -78,7 +78,7 @@ public class ICalendarHandlerMethodReturnValueHandlerTest {
 
 @Configuration
 @EnableWebMvc
-@EnableCSVFormatter
+@EnableICSFormatter
 class SampleICSConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public SampleController sampleController() {

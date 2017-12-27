@@ -7,11 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Add this annotation to your spring web configuration to enable CSV support
+ * Add this annotation to your spring web configuration to enable ICS support
  */
 @Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @Target(value = { java.lang.annotation.ElementType.TYPE })
 @Documented
 @Import({ICalendarFormatterConfiguration.class})
-public @interface EnableCSVFormatter {
+public @interface EnableICSFormatter {
 }
