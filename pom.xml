@@ -6,7 +6,7 @@
 
     <groupId>io.dactilo.sumbawa</groupId>
     <artifactId>spring-ical</artifactId>
-    <version>1.4</version>
+    <version>1.5</version>
 
     <licenses>
         <license>

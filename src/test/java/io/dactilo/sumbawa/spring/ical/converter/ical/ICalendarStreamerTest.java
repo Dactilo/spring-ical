@@ -35,6 +35,9 @@ public class ICalendarStreamerTest extends AbstractICalendarStreamerTest {
         assertThat(icsFile, containsString("test@test.fr"));
         assertThat(icsFile, containsString("Mr Test"));
 
+        assertThat(icsFile, containsString("test2@test.fr"));
+        assertThat(icsFile, containsString("Mr Test 2"));
+
     }
 
     @Test

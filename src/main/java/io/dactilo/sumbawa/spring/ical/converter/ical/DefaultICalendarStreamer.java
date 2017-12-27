@@ -47,10 +47,10 @@ public class DefaultICalendarStreamer implements ICalendarStreamer {
             addUuid(vEvent, calendar);
             addAttendees(iCalendarEvent, vEvent);
             addChair(iCalendarEvent, vEvent);
-
-            final CalendarOutputter outputter = new CalendarOutputter();
-            outputter.output(calendar, outputStream);
         }
+
+        final CalendarOutputter outputter = new CalendarOutputter();
+        outputter.output(calendar, outputStream);
     }
 
     private void addUuid(VEvent vEvent, Calendar calendar) throws SocketException {
