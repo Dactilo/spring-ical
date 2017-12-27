@@ -5,6 +5,7 @@ import io.dactilo.sumbawa.spring.ical.converter.api.attendees.ICalEventChair;
 import io.dactilo.sumbawa.spring.ical.converter.api.attendees.ICalendarAttendee;
 import io.dactilo.sumbawa.spring.ical.converter.api.attendees.ICalendarAttendeeTransformer;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -49,7 +50,7 @@ public class ObjectToCalendarConverter implements CalendarConverter {
         List<ICalendarAttendee> attendees = new ArrayList<>();
 
         for (Method method : methods) {
-            if (method.getAnnotation(ICalColumnIgnore.class) == null) {
+            if (supportICalendar(method)) {
                 try {
                     Object methodResult = method.invoke(readRow);
 
@@ -101,6 +102,25 @@ public class ObjectToCalendarConverter implements CalendarConverter {
         }
 
         return new ICalendarEvent(startDate, endDate, allDay, name, attendees, chair);
+    }
+
+    private boolean supportICalendar(Method method) {
+        final List<Class<? extends Annotation>> supportedAnnotations = Arrays.asList(
+                ICalEventName.class,
+                ICalEventAllDay.class,
+                ICalEventStartDate.class,
+                ICalEventEndDate.class,
+                ICalEventChair.class,
+                ICalEventAttendee.class
+        );
+
+        for (Class<? extends Annotation> supportedAnnotation : supportedAnnotations) {
+            if(method.getAnnotation(supportedAnnotation) != null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private ICalendarAttendee createICalEventAttendeeInstanceFromField(Method method, Object attendeeToBeTransformed) throws ReflectiveOperationException {
