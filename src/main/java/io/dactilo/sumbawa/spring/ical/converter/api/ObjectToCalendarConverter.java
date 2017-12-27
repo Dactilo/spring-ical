@@ -4,9 +4,9 @@ import io.dactilo.sumbawa.spring.ical.converter.api.attendees.ICalEventAttendee;
 import io.dactilo.sumbawa.spring.ical.converter.api.attendees.ICalEventChair;
 import io.dactilo.sumbawa.spring.ical.converter.api.attendees.ICalendarAttendee;
 import io.dactilo.sumbawa.spring.ical.converter.api.attendees.ICalendarAttendeeTransformer;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
  * Converts a list of Java Beans into a {@link ICalendarEvent} description.
  * This class allows to use the following annotation on the Java Bean getter description:
  * <ul>
- * <li>{@link ICalColumnIgnore}</li>
  * <li>{@link ICalEventName}</li>
  * <li>{@link ICalEventStartDate}</li>
  * <li>{@link ICalEventEndDate}</li>
@@ -56,7 +55,7 @@ public class ObjectToCalendarConverter implements CalendarConverter {
 
                     ICalEventName iCalEventNameAnnotation = method.getAnnotation(ICalEventName.class);
                     if (iCalEventNameAnnotation != null) {
-                        name = methodResult.toString();
+                        name = stripHtml(methodResult.toString());
                     }
 
                     ICalEventStartDate iCalEventStartDate = method.getAnnotation(ICalEventStartDate.class);
@@ -102,6 +101,10 @@ public class ObjectToCalendarConverter implements CalendarConverter {
         }
 
         return new ICalendarEvent(startDate, endDate, allDay, name, attendees, chair);
+    }
+
+    private String stripHtml(String input) {
+        return StringEscapeUtils.unescapeHtml4(input.replaceAll("\\<[^>]*>","")).trim();
     }
 
     private boolean supportICalendar(Method method) {
