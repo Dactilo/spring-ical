@@ -93,14 +93,14 @@ class SampleController {
     @RequestMapping(value = "json", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<List<AbstractICalendarStreamerTest.ObjectExampleDTO>> json() throws ParseException {
         return new ResponseEntity<>(Collections.singletonList(
-                new AbstractICalendarStreamerTest.ObjectExampleDTO("field 1", createEndDate(), createEndDate(), false)
+                new AbstractICalendarStreamerTest.ObjectExampleDTO("field 1", createEndDate(), createEndDate(), false, null)
         ), HttpStatus.OK);
     }
 
     @RequestMapping(value = "ics", method = RequestMethod.GET, produces = "text/calendar")
     public ResponseEntity<List<AbstractICalendarStreamerTest.ObjectExampleDTO>> calendar() throws ParseException {
         return new ResponseEntity<>(Collections.singletonList(
-                new AbstractICalendarStreamerTest.ObjectExampleDTO("field 1", createStartDate(), createEndDate(), false)
+                new AbstractICalendarStreamerTest.ObjectExampleDTO("field 1", createStartDate(), createEndDate(), false, null)
         ), HttpStatus.OK);
     }
 

@@ -1,5 +1,11 @@
 package io.dactilo.sumbawa.spring.ical.converter.api;
 
+import io.dactilo.sumbawa.spring.ical.converter.api.attendees.ICalEventAttendee;
+import io.dactilo.sumbawa.spring.ical.converter.api.attendees.ICalEventChair;
+import io.dactilo.sumbawa.spring.ical.converter.api.attendees.ICalendarAttendee;
+import io.dactilo.sumbawa.spring.ical.converter.api.attendees.ICalendarAttendeeTransformer;
+
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -32,7 +38,6 @@ public class ObjectToCalendarConverter implements CalendarConverter {
 
     private ICalendarEvent convertValue(Object readRow) {
         final Class<?> clazz = readRow.getClass();
-        final Map<String, Object> results = new LinkedHashMap<>();
 
         Method[] methods = clazz.getDeclaredMethods();
 
@@ -40,6 +45,8 @@ public class ObjectToCalendarConverter implements CalendarConverter {
         Date startDate = null;
         Date endDate = null;
         Boolean allDay = false;
+        ICalendarAttendee chair = null;
+        List<ICalendarAttendee> attendees = new ArrayList<>();
 
         for (Method method : methods) {
             if (method.getAnnotation(ICalColumnIgnore.class) == null) {
@@ -68,6 +75,22 @@ public class ObjectToCalendarConverter implements CalendarConverter {
                             endDate = (Date) methodResult;
                         }
                     }
+
+                    ICalEventChair iCalEventChair = method.getAnnotation(ICalEventChair.class);
+                    if (iCalEventChair != null) {
+                        chair = createICalEventAttendeeInstanceFromField(method, methodResult);
+                    }
+
+                    ICalEventAttendee iCalEventAttendee = method.getAnnotation(ICalEventAttendee.class);
+                    if (iCalEventAttendee != null) {
+                        if(methodResult instanceof List) {
+                            for (Object attendee : ((List) methodResult)) {
+                                attendees.add(createICalEventAttendeeInstanceFromField(method, attendee));
+                            }
+                        } else if(methodResult instanceof String) {
+                            attendees.add(createICalEventAttendeeInstanceFromField(method, methodResult));
+                        }
+                    }
                 } catch (ReflectiveOperationException e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -75,7 +98,20 @@ public class ObjectToCalendarConverter implements CalendarConverter {
             }
         }
 
-        return new ICalendarEvent(startDate, endDate, allDay, name);
+        return new ICalendarEvent(startDate, endDate, allDay, name, attendees, chair);
+    }
+
+    private ICalendarAttendee createICalEventAttendeeInstanceFromField(Method method, Object attendeeToBeTransformed) throws ReflectiveOperationException {
+        final ICalendarAttendee result;
+        final ICalendarAttendeeTransformer iCalendarAttendeeTransformer = method.getAnnotation(ICalendarAttendeeTransformer.class);
+
+        if(iCalendarAttendeeTransformer == null) {
+            result = new ICalendarAttendee(attendeeToBeTransformed.toString(), null);
+        } else {
+            result = iCalendarAttendeeTransformer.transformer().getConstructor().newInstance().transform(attendeeToBeTransformed);
+        }
+
+        return result;
     }
 
 }
