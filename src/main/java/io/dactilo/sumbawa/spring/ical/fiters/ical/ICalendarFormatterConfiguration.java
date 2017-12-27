@@ -18,7 +18,7 @@ public class ICalendarFormatterConfiguration extends WebMvcConfigurerAdapter {
     private SpringICalConfiguration springICalConfiguration;
 
     @Bean
-    public ICalendarHandlerMethodReturnValueHandler csvHandlerMethodReturnValueHandler() {
+    public ICalendarHandlerMethodReturnValueHandler iCalendarHandlerMethodReturnValueHandler() {
         return new ICalendarHandlerMethodReturnValueHandler(defaultICalendarStreamer(), springICalConfiguration.objectToCalendarConverter());
     }
 
@@ -29,6 +29,6 @@ public class ICalendarFormatterConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(csvHandlerMethodReturnValueHandler());
+        converters.add(iCalendarHandlerMethodReturnValueHandler());
     }
 }
