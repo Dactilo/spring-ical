@@ -78,7 +78,9 @@ public class ObjectToCalendarConverter implements CalendarConverter {
 
                     ICalEventChair iCalEventChair = method.getAnnotation(ICalEventChair.class);
                     if (iCalEventChair != null) {
-                        chair = createICalEventAttendeeInstanceFromField(method, methodResult);
+                        if(methodResult != null) {
+                            chair = createICalEventAttendeeInstanceFromField(method, methodResult);
+                        }
                     }
 
                     ICalEventAttendee iCalEventAttendee = method.getAnnotation(ICalEventAttendee.class);
