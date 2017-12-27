@@ -23,7 +23,11 @@ import java.net.SocketException;
 import java.net.URI;
 
 public class DefaultICalendarStreamer implements ICalendarStreamer {
+    private final UidGenerator uidGenerator;
 
+    public DefaultICalendarStreamer(UidGenerator uidGenerator) {
+        this.uidGenerator = uidGenerator;
+    }
 
     @Override
     public void streamSpreadsheet(OutputStream outputStream,
@@ -44,19 +48,19 @@ public class DefaultICalendarStreamer implements ICalendarStreamer {
                 vEvent = new VEvent(start, end, iCalendarEvent.getName());
             }
 
-            addUuid(vEvent, calendar);
+            addUuid(vEvent);
             addAttendees(iCalendarEvent, vEvent);
             addChair(iCalendarEvent, vEvent);
+
+            calendar.getComponents().add(vEvent);
         }
 
         final CalendarOutputter outputter = new CalendarOutputter();
         outputter.output(calendar, outputStream);
     }
 
-    private void addUuid(VEvent vEvent, Calendar calendar) throws SocketException {
-        final UidGenerator uidGenerator = new UidGenerator("uidGen");
+    private void addUuid(VEvent vEvent) throws SocketException {
         vEvent.getProperties().add(uidGenerator.generateUid());
-        calendar.getComponents().add(vEvent);
     }
 
     private void addAttendees(ICalendarEvent iCalendarEvent, VEvent vEvent) {

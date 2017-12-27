@@ -1,20 +1,25 @@
 package io.dactilo.sumbawa.spring.ical.converter.ical;
 
 import io.dactilo.sumbawa.spring.ical.converter.api.AbstractICalendarStreamerTest;
+import net.fortuna.ical4j.util.UidGenerator;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class ICalendarStreamerTest extends AbstractICalendarStreamerTest {
-    private final DefaultICalendarStreamer defaultICalendarStreamer = new DefaultICalendarStreamer();
+    private final UidGenerator uidGenerator = new UidGenerator("uidGen");
+    private final DefaultICalendarStreamer defaultICalendarStreamer = new DefaultICalendarStreamer(uidGenerator);
+
+    public ICalendarStreamerTest() throws SocketException {
+    }
 
     @Test
     public void testSimpleObject_conversionToICSIsSuccessful() throws ParseException, IOException {
